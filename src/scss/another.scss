@@ -1,0 +1,553 @@
+// Подключение стилей
+@import "fonts";
+@import "nullstyle";
+/* ----------------------------------------------------------------------------------- */
+
+
+// Переменные (для темной темы)
+:root {
+    --index: calc(1vw + 1vh);
+    // TODO: для изменения цветовой схемы сайта
+    // ! Основная часть сайта
+    --default_color: #fff;
+    --default_color-title: #fff;
+    --default_background: rgb(0, 10, 41);
+
+    // ! Текст с отличным цветом от основного
+    --button_stay-safe-title: #fff;
+    --button_stay-safe-text: rgb(231, 231, 231);
+    --counter_text: #fff;
+    --item-healthcare__title: #f07a82;
+
+    // ! Блоки с отличным фоном от основного
+    --default_background-blocks: #252438;
+    --default_background-counter: #252438;
+    --default_background-healthcare: rgb(0, 10, 41);
+
+    // ! Плашка меню + меню бургера
+    --default_color-menu: #fff;
+    --header_bar-background: rgb(94, 94, 190);
+    --menu_burger-background: rgb(94, 94, 190);
+    --burger_color: #000;
+}
+// Переменные (для светлой темы, когда к html добавляется класс .light)
+.light {
+    --index: calc(1vw + 1vh);
+    // TODO: для изменения цветовой схемы сайта
+    // ! Основная часть сайта
+    --default_color: #616161;
+    --default_color-title: #000;
+    --default_background: #fff;
+
+    // ! Текст с отличным цветом от основного
+    --button_stay-safe-title: #b0b0b0;
+    --button_stay-safe-text: #000;
+    --counter_text: #000;
+    --item-healthcare__title: #883838;
+    
+    // ! Блоки с отличным фоном от основного
+    --default_background-blocks: #FAFBFD;
+    --default_background-counter: #fff;
+    --default_background-healthcare: #fff;
+
+    // ! Плашка меню + меню бургера
+    --default_color-menu: #000;
+    --header_bar-background: #fff;
+    --menu_burger-background: #f5d7d9;
+    --burger_color: #000;
+}
+
+// Миксины
+@mixin fontz($fz) {
+    font-size: $fz * 1px;
+}
+/* ----------------------------------------------------------------------------------- */
+/* Чтобы скролл был на всем макете */
+.wrapper {
+    min-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+/* ----------------------------------------------------------------------------------- */
+// Любые объект, в классе которого содержится такой класс __container, то к нему применить эти свойства
+// то есть теперь достаточно просто писать header__container и все, без приписки доп класса _container
+[class*="__container"] {
+    max-width: 1087px; // + 30px из-за отступа безопасности
+    margin: 0 auto;
+    padding: 0 15px;
+    /* --- PC --- */
+    @media (max-width: 1057px) {
+        max-width: 970px;
+    }
+    // дробные значения так как планшет в горизонтальном имеет 768, но нам не нужна мобилка на планшете
+    // поэтому немного уменьшаем
+    /* --- TABLET --- */
+    @media (max-width: 991.98px) {
+        max-width: 750px;
+    }
+    /* --- MOBILE --- */
+    @media (max-width: 767.98px) {
+        max-width: none;
+    }
+    /* --- MOBILE SMALL --- */
+    @media (max-width: 479.98px) {
+       
+    }
+}
+
+/* --------------------------Изменение цветовой схемы сайта--------------------------------- */
+// TODO: можно таким путем реализовать, но мы хотим ещё добавить возможность изменения пользователем
+// TODO: поэтому от такого подхода отказываюсь и пишу JS + HTML (в header) + color_scheme.scss подключаю
+// body {
+//     transition: all 0.3s ease 0s;
+//     background-color: #fff;
+//     color: #616161;
+//     // если в настройках системы указана темная тема, то такие параметры будут
+//     @media (prefers-color-scheme: dark) {
+//         color: #ffffff;
+//         background-color: rgb(27, 27, 27);
+//     }
+// }
+// .header {
+//     @media (prefers-color-scheme: dark) {}
+// }
+// .get-started {
+//     background-color: #FAFBFD;
+// }
+// .experts {
+//     background-color: #fafbfb;
+// }
+
+html {
+    &.dark {
+        .button__change-theme {
+            background: url('@img/icons/sun.svg') 0 0 no-repeat;
+        }
+    }
+    &.light {
+        .button__change-theme {
+            background: url('@img/icons/moon.svg') 0 0 no-repeat;
+        }
+    }
+}
+
+.button__color-scheme {
+    width: 30px;
+    height: 30px;
+    margin-right: 7px;
+    position: relative;
+}
+.button__change-theme {
+    width: 100%;
+    height: 100%;
+}
+.button__reset-theme {
+    opacity: 0;
+    visibility: hidden;
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    &::before {
+        content: "x";
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        cursor: pointer;
+        width: 10px;
+        height: 10px;
+        @include fontz(10);
+        color: #000;
+    }
+}
+
+/* --------------------------HEADER--------------------------------------------------------- */
+
+.header {
+    // если шабка абсолютом, то в JS надо не фиксировать body (mainBody.style.position = 'fixed';)
+    // в противном случае фиксировать + нужно тогда background
+    position: fixed;
+    // Фон прописан в обработчике scroll в burger.js
+    // background: #fff;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    transition: all 0.5s ease 0s;
+    @media (max-width: 767.98px) {
+        transition: none;
+        background: var(--header_bar-background) !important;
+    }
+}
+.header__container {
+    display: flex;
+    // высота шапки
+    min-height: 114px;
+    align-items: center;
+    position: relative;
+    @media (max-width: 991.98px) {
+        min-height: 80px;
+    }
+}
+.header__logo {
+    position: relative;
+    z-index: 5;
+    transform: translate(-120%, 0px);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+    &._active {
+        transform: translate(0px, 0px);
+        opacity: 1;
+    }
+    @media (max-width: 479.98px) {
+        // Прячем надпись на картинке
+        flex: 0 0 40px; // ширина значка микроба что ли
+        overflow: hidden;
+    }
+}
+.header__menu {
+    // разрешаю увеличиваться, уменьшаться и определять ширину автоматом
+    flex: 1 1 auto;
+}
+.header__button {
+    position: relative;
+    z-index: 5;
+    // запрещаю увеличиваться, уменьшаться и определяю фиксированную ширину
+    flex: 0 0 252px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    transform: translate(120%, 0px);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+    &._active {
+        transform: translate(0px, 0px);
+        opacity: 1;
+    }
+    @media (max-width: 991.98px) {
+        flex: 0 0 170px;
+        .button_blue {
+            padding: 14px 25px;
+        }
+    }
+}
+
+.menu {
+    display: flex;
+    justify-content: flex-end;
+}
+.menu__body {
+    // Скрываем для бургера
+    @media (max-width: 767.98px) {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        height: 100%;
+        width: 100%;
+        background-color: var(--menu_burger-background);
+        padding: 90px 15px 30px;
+        transition: left 0.3s ease 0s;
+        overflow: auto; // добавляет возможность скролла menu__list, если объекты не помещаются
+    }
+    &.active {
+        // подкладка, чтобы при скролле, если много пунктов, то пряталось в неё, а не в верхний край экрана
+        &::before {
+            @media (max-width: 767.98px) {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 80px;
+                width: 100%;
+                background-color: var(--menu_burger-background);
+            }
+        }
+        left: 0;
+        // top: 90px;
+    }
+}
+.menu__list {
+    display: flex;
+    // gap: 30px; // не поддерживается в старых Safari, поэтому не используем
+    // ! изначально скрываем - для анимирования при скролле/появлении
+    transform: translate(0px, 120%);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+    @media (max-width: 767.98px) {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    // ! добавляющийся класс в JS
+    &._active {
+        transform: translate(0px, 0px);
+        opacity: 1;
+    }
+}
+.menu__item {
+    overflow: auto;
+    margin: 0px 40px 0px 0px;
+    @media (max-width: 991.98px) {
+        margin: 0px 30px 0px 0px;
+    }
+    @media (max-width: 767.98px) {
+        margin: 0px 0px 20px 0px;
+    }
+    &:last-child {
+        @media (max-width: 767.98px) {
+            margin: 0;
+        }
+    }
+}
+.menu__link {
+    font-family: Raleway;
+    text-transform: uppercase;
+    font-weight: 700;
+    @include fontz(10);
+    // 12px/10px = 1.2
+    line-height: 1.2;
+    letter-spacing: 2.24px;
+    color: var(--default_color-menu);
+    &:hover {
+        text-decoration: underline;
+    }
+    @media (max-width: 767.98px) {
+        @include fontz(20);
+    }
+}
+/* ----------------------------------------------------------------------------------- */
+// Бургер
+.header__burger-button {
+    display: none;
+    @media (max-width: 767.98px) {
+        background-color: transparent;
+        position: relative;
+        width: 30px;
+        height: 24px;
+        display: block;
+        margin: 0px 0px 0px 20px;
+        &::before,&::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            background-color: var(--burger_color);
+            height: 3px;
+            width: 100%;
+            transition: all 0.3s ease 0s;
+        }
+        &::before {
+            top: 0;
+        }
+        &::after {
+            bottom: 0;
+        }
+        span {
+            position: absolute;
+            left: 0;
+            top: 10.5px;
+            background-color: var(--burger_color);
+            height: 3px;
+            width: 100%;
+            transition: all 0.3s ease 0s;
+        }
+    }
+    &.active:before {
+		transform: rotate(40deg);
+        top: 50%;
+	}
+	&.active:after {
+		transform: rotate(-40deg);
+        top: 50%;
+	}
+	&.active span {
+		transform: scale(0);
+	}
+}
+/* ----------------------------------------------------------------------------------- */
+// BEM-block
+.button {
+    display: inline-block; // стоит добавлять, хоть в данном случае она и является flex-элементом
+    font-family: Raleway;
+    text-transform: uppercase;
+    font-weight: 800;
+    @include fontz(10);
+    line-height: 1.2;
+    // X / 16 = Yem; => Yem * 16 = X
+    // letter-spacing: 0.14em;
+    letter-spacing: 2.24px;
+    color: #FCFDFE;
+    padding: 14px 30px;
+    border-radius: 5px;
+    background-color: #EC5863;
+    transition: background-color 0.3s ease 0s;
+    &:hover {
+        background-color: #f07a82;
+    }
+    @media (max-width: 767.98px) {
+        padding: 14px 20px;
+    }
+}
+.button_blue {
+    background-color: #4285F4;
+    &:hover {
+        background-color: #5d91e4;
+    }
+}
+
+
+/* ---------------------------MAIN-------------------------------------------------------- */
+.main { 
+    /* позволяем контенту увеличиваться и он прибивает футер вниз */
+    flex: 1 1 auto;
+    background-color: var(--default_background-blocks);
+}
+.main__container {
+    padding-top: 150px;
+    @media (max-width: 991.98px) {
+        padding-top: 100px;
+    }
+}
+/* ----------------------------------------------------------------------------------- */
+// BEM-block
+.block-text {
+
+}
+.block-text_center {
+    text-align: center;
+}
+.block-text__title {
+    font-weight: 700;
+    @include fontz(44);
+    line-height: 126%;
+    color: var(--default_color-title);
+    span {
+        color: #EC5863;
+    }
+    // на случай, если ниже не будет текст и тогда висячий отступ уберется, так как title станет последним элементом
+    &:not(:last-child) {
+        margin: 0 0 12px 0;
+    }
+    @media (max-width: 767.98px) {
+        @include fontz(34);
+    }
+}
+.block-text__title-blue {
+    span {
+        color: #4285F4;
+    }
+}
+.block-text__text {
+    &:not(:last-child) {
+        margin: 0 0 24px 0;
+    }
+}
+.block-text__text_mw {
+    max-width: 620px;
+    margin: 0 auto;
+}
+.block-text__button {
+}
+/* ----------------------------------------------------------------------------------- */
+
+
+
+/* ----------------------------------------------------------------------------------- */
+
+.footer {
+    padding: 45px 0;
+    @media (max-width: 479.98px) {
+        padding: 25px 0;
+    }
+}
+.footer__container {
+}
+.footer__items {
+    max-width: 410px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    @media (max-width: 479.98px) {
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+// 160/56
+.footer__item {
+    width: 160px;
+    height: 56px;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.5s ease 0s;
+    opacity: 0;
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    &:nth-child(1) {
+        transform: translate(-500%, 0px);
+    }
+    &:nth-child(2) {
+        transform: translate(500%, 0px);
+    }
+    @media (max-width: 479.98px) {
+        opacity: 1;
+        &:not(:last-child) {
+            margin-bottom: 15px;
+        }
+    }
+}
+
+/* -------Animation of Appearance------------------------------------------------------------------ */
+// Для каждого анимированного блока в классе прописывается своя доп анимация, + класс _active
+// задержка по элементам: 0; 0.2; 0.4; 0.6; 0.8
+
+// для повторяющихся блоков для анимации
+._anim-show {
+    transform: translate(0px, 120%);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+ }
+ 
+ // такой финт для того, чтобы анимировать статичный блок, по типу с текстом
+ // то есть на контейнер ставим _anim-items и к нему добавляется _active при скролле и уже если
+ // есть _active и глубже есть класс _anim-show, то и его анимировать
+ ._active {
+    >._anim-show {
+        &.healthcare__column_1 {
+            &::before,&::after {
+                opacity: 1;
+            }
+            &::before {
+                transform: rotate(-30deg) translate(0px, 0px);
+            }
+            &::after {
+                transform: rotate(30deg) translate(0px, 0px);
+            }
+        }
+        &.healthcare__column_2 {
+            &::after {
+                opacity: 1;
+                transform: rotate(-30deg) translate(0px, 0px);
+            }
+        }
+        &.healthcare__column_3 {
+            &::after {
+                opacity: 1;
+                transform: rotate(-30deg) translate(0px, 0px);
+            }
+        }
+        &.footer__item {
+            opacity: 0.8;
+            &:hover {
+                opacity: 1;
+            }
+        }
+        opacity: 1;
+        transform: translate(0px, 0px);
+    }
+ }
+
+

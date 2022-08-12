@@ -1,0 +1,55 @@
+/*Обнуление стилей*/
+/*1) Очищаем все отступы и границы*/
+* {
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+/*2) Меняет подсчет ширины блока для удобства верстки*/
+*,*:before,*:after {
+	box-sizing: border-box;
+}
+/*3) Убираем линии обводки у некоторых браузеров*/
+:focus,:active {outline: none;}
+a:focus,a:active{outline: none;}
+
+/*4) Делаем теги блочными*/
+nav,footer,header,aside{display: block;}
+
+/*5) Уравнивание поведения шрифтов и элементов для разных браузеров*/
+/*+запрет самовольного увеличения шрифта на телефонах, например IPhone*/
+html,body {
+	height: 100%;
+	list-style: 1;
+}
+body {
+    // так как этого шрифта больше всего, то поставим его по-умолчанию
+    font-family: 'Rubik';
+    // ставим преобладающий по макету для шрифта по умолчанию
+	font-size: 12px;
+    // цвет шрифта по умолчанию
+    color: var(--default_color);
+    background-color: var(--default_background);
+}
+
+/*6) Наследование семейства шрифта для этих тегов, так как по умолчанию они не наследуют*/
+input,button,textarea{font-family: inherit;}
+
+/*7) Убирают некоторые особенности тегам в разных браузерах*/
+input:-ms-clear{display: none;}
+button{cursor: pointer;}
+button:-moz-focus-inner{padding: 0;border: 0;}
+a, a:visited{text-decoration: none;}
+a:hover{text-decoration: none;}
+ul,li,ol{list-style: none;}
+/* выровнено по верху, чтобы не было снизу артефактного отступа */
+img{vertical-align: top;}
+
+/*8) Обнуляем все заголовки h*/
+h1,h2,h3,h4,h5,h6 {font-size: inherit;font-weight: 400;}
+
+// Для JS (Класс, блокирующий прокрутку контента под активным меню бургером)
+body.lock {
+    height: 100%;
+    overflow: hidden;
+ }

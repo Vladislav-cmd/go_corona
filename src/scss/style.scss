@@ -1,0 +1,1122 @@
+// Подключение стилей
+@import "fonts";
+@import "nullstyle";
+/* ----------------------------------------------------------------------------------- */
+
+
+// Переменные (для темной темы)
+:root {
+    --index: calc(1vw + 1vh);
+    // TODO: для изменения цветовой схемы сайта
+    // ! Основная часть сайта
+    --default_color: #fff;
+    --default_color-title: #fff;
+    --default_background: rgb(0, 10, 41);
+
+    // ! Текст с отличным цветом от основного
+    --button_stay-safe-title: #fff;
+    --button_stay-safe-text: rgb(231, 231, 231);
+    --counter_text: #fff;
+    --item-healthcare__title: #f07a82;
+
+    // ! Блоки с отличным фоном от основного
+    --default_background-blocks: #252438;
+    --default_background-counter: #252438;
+    --default_background-healthcare: rgb(0, 10, 41);
+
+    // ! Плашка меню + меню бургера
+    --default_color-menu: #fff;
+    --header_bar-background: rgb(94, 94, 190);
+    --menu_burger-background: rgb(94, 94, 190);
+    --burger_color: #000;
+}
+// Переменные (для светлой темы, когда к html добавляется класс .light)
+.light {
+    --index: calc(1vw + 1vh);
+    // TODO: для изменения цветовой схемы сайта
+    // ! Основная часть сайта
+    --default_color: #616161;
+    --default_color-title: #000;
+    --default_background: #fff;
+
+    // ! Текст с отличным цветом от основного
+    --button_stay-safe-title: #b0b0b0;
+    --button_stay-safe-text: #000;
+    --counter_text: #000;
+    --item-healthcare__title: #883838;
+    
+    // ! Блоки с отличным фоном от основного
+    --default_background-blocks: #FAFBFD;
+    --default_background-counter: #fff;
+    --default_background-healthcare: #fff;
+
+    // ! Плашка меню + меню бургера
+    --default_color-menu: #000;
+    --header_bar-background: #fff;
+    --menu_burger-background: #f5d7d9;
+    --burger_color: #000;
+}
+
+// Миксины
+@mixin fontz($fz) {
+    font-size: $fz * 1px;
+}
+/* ----------------------------------------------------------------------------------- */
+/* Чтобы скролл был на всем макете */
+.wrapper {
+    min-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+/* ----------------------------------------------------------------------------------- */
+// Любые объект, в классе которого содержится такой класс __container, то к нему применить эти свойства
+// то есть теперь достаточно просто писать header__container и все, без приписки доп класса _container
+[class*="__container"] {
+    max-width: 1087px; // + 30px из-за отступа безопасности
+    margin: 0 auto;
+    padding: 0 15px;
+    /* --- PC --- */
+    @media (max-width: 1057px) {
+        max-width: 970px;
+    }
+    // дробные значения так как планшет в горизонтальном имеет 768, но нам не нужна мобилка на планшете
+    // поэтому немного уменьшаем
+    /* --- TABLET --- */
+    @media (max-width: 991.98px) {
+        max-width: 750px;
+    }
+    /* --- MOBILE --- */
+    @media (max-width: 767.98px) {
+        max-width: none;
+    }
+    /* --- MOBILE SMALL --- */
+    @media (max-width: 479.98px) {
+       
+    }
+}
+
+/* --------------------------Изменение цветовой схемы сайта--------------------------------- */
+// TODO: можно таким путем реализовать, но мы хотим ещё добавить возможность изменения пользователем
+// TODO: поэтому от такого подхода отказываюсь и пишу JS + HTML (в header) + color_scheme.scss подключаю
+// body {
+//     transition: all 0.3s ease 0s;
+//     background-color: #fff;
+//     color: #616161;
+//     // если в настройках системы указана темная тема, то такие параметры будут
+//     @media (prefers-color-scheme: dark) {
+//         color: #ffffff;
+//         background-color: rgb(27, 27, 27);
+//     }
+// }
+// .header {
+//     @media (prefers-color-scheme: dark) {}
+// }
+// .get-started {
+//     background-color: #FAFBFD;
+// }
+// .experts {
+//     background-color: #fafbfb;
+// }
+
+html {
+    &.dark {
+        .button__change-theme {
+            background: url('@img/icons/sun.svg') 0 0 no-repeat;
+        }
+    }
+    &.light {
+        .button__change-theme {
+            background: url('@img/icons/moon.svg') 0 0 no-repeat;
+        }
+    }
+}
+
+.button__color-scheme {
+    width: 30px;
+    height: 30px;
+    margin-right: 7px;
+    position: relative;
+}
+.button__change-theme {
+    width: 100%;
+    height: 100%;
+}
+.button__reset-theme {
+    opacity: 0;
+    visibility: hidden;
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    &::before {
+        content: "x";
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        cursor: pointer;
+        width: 10px;
+        height: 10px;
+        @include fontz(10);
+        color: #000;
+    }
+}
+
+/* --------------------------HEADER--------------------------------------------------------- */
+
+.header {
+    // если шабка абсолютом, то в JS надо не фиксировать body (mainBody.style.position = 'fixed';)
+    // в противном случае фиксировать + нужно тогда background
+    position: fixed;
+    // Фон прописан в обработчике scroll в burger.js
+    // background: #fff;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    transition: all 0.5s ease 0s;
+    @media (max-width: 767.98px) {
+        transition: none;
+        background: var(--header_bar-background) !important;
+    }
+}
+.header__container {
+    display: flex;
+    // высота шапки
+    min-height: 114px;
+    align-items: center;
+    position: relative;
+    @media (max-width: 991.98px) {
+        min-height: 80px;
+    }
+}
+.header__logo {
+    position: relative;
+    z-index: 5;
+    transform: translate(-120%, 0px);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+    &._active {
+        transform: translate(0px, 0px);
+        opacity: 1;
+    }
+    @media (max-width: 479.98px) {
+        // Прячем надпись на картинке
+        flex: 0 0 40px; // ширина значка микроба что ли
+        overflow: hidden;
+    }
+}
+.header__menu {
+    // разрешаю увеличиваться, уменьшаться и определять ширину автоматом
+    flex: 1 1 auto;
+}
+.header__button {
+    position: relative;
+    z-index: 5;
+    // запрещаю увеличиваться, уменьшаться и определяю фиксированную ширину
+    flex: 0 0 252px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    transform: translate(120%, 0px);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+    &._active {
+        transform: translate(0px, 0px);
+        opacity: 1;
+    }
+    @media (max-width: 991.98px) {
+        flex: 0 0 170px;
+        .button_blue {
+            padding: 14px 25px;
+        }
+    }
+}
+
+.menu {
+    display: flex;
+    justify-content: flex-end;
+}
+.menu__body {
+    // Скрываем для бургера
+    @media (max-width: 767.98px) {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        height: 100%;
+        width: 100%;
+        background-color: var(--menu_burger-background);
+        padding: 90px 15px 30px;
+        transition: left 0.3s ease 0s;
+        overflow: auto; // добавляет возможность скролла menu__list, если объекты не помещаются
+    }
+    &.active {
+        // подкладка, чтобы при скролле, если много пунктов, то пряталось в неё, а не в верхний край экрана
+        &::before {
+            @media (max-width: 767.98px) {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 80px;
+                width: 100%;
+                background-color: var(--menu_burger-background);
+            }
+        }
+        left: 0;
+        // top: 90px;
+    }
+}
+.menu__list {
+    display: flex;
+    // gap: 30px; // не поддерживается в старых Safari, поэтому не используем
+    // ! изначально скрываем - для анимирования при скролле/появлении
+    transform: translate(0px, 120%);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+    @media (max-width: 767.98px) {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    // ! добавляющийся класс в JS
+    &._active {
+        transform: translate(0px, 0px);
+        opacity: 1;
+    }
+}
+.menu__item {
+    overflow: auto;
+    margin: 0px 40px 0px 0px;
+    @media (max-width: 991.98px) {
+        margin: 0px 30px 0px 0px;
+    }
+    @media (max-width: 767.98px) {
+        margin: 0px 0px 20px 0px;
+    }
+    &:last-child {
+        @media (max-width: 767.98px) {
+            margin: 0;
+        }
+    }
+}
+.menu__link {
+    font-family: Raleway;
+    text-transform: uppercase;
+    font-weight: 700;
+    @include fontz(10);
+    // 12px/10px = 1.2
+    line-height: 1.2;
+    letter-spacing: 2.24px;
+    color: var(--default_color-menu);
+    &:hover {
+        text-decoration: underline;
+    }
+    @media (max-width: 767.98px) {
+        @include fontz(20);
+    }
+}
+/* ----------------------------------------------------------------------------------- */
+// Бургер
+.header__burger-button {
+    display: none;
+    @media (max-width: 767.98px) {
+        background-color: transparent;
+        position: relative;
+        width: 30px;
+        height: 24px;
+        display: block;
+        margin: 0px 0px 0px 20px;
+        &::before,&::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            background-color: var(--burger_color);
+            height: 3px;
+            width: 100%;
+            transition: all 0.3s ease 0s;
+        }
+        &::before {
+            top: 0;
+        }
+        &::after {
+            bottom: 0;
+        }
+        span {
+            position: absolute;
+            left: 0;
+            top: 10.5px;
+            background-color: var(--burger_color);
+            height: 3px;
+            width: 100%;
+            transition: all 0.3s ease 0s;
+        }
+    }
+    &.active:before {
+		transform: rotate(40deg);
+        top: 50%;
+	}
+	&.active:after {
+		transform: rotate(-40deg);
+        top: 50%;
+	}
+	&.active span {
+		transform: scale(0);
+	}
+}
+/* ----------------------------------------------------------------------------------- */
+// BEM-block
+.button {
+    display: inline-block; // стоит добавлять, хоть в данном случае она и является flex-элементом
+    font-family: Raleway;
+    text-transform: uppercase;
+    font-weight: 800;
+    @include fontz(10);
+    line-height: 1.2;
+    // X / 16 = Yem; => Yem * 16 = X
+    // letter-spacing: 0.14em;
+    letter-spacing: 2.24px;
+    color: #FCFDFE;
+    padding: 14px 30px;
+    border-radius: 5px;
+    background-color: #EC5863;
+    transition: background-color 0.3s ease 0s;
+    &:hover {
+        background-color: #f07a82;
+    }
+    @media (max-width: 767.98px) {
+        padding: 14px 20px;
+    }
+}
+.button_blue {
+    background-color: #4285F4;
+    &:hover {
+        background-color: #5d91e4;
+    }
+}
+
+
+/* ---------------------------MAIN-------------------------------------------------------- */
+.main { 
+    /* позволяем контенту увеличиваться и он прибивает футер вниз */
+    flex: 1 1 auto;
+}
+/* ----------------------------------------------------------------------------------- */
+// BEM-block
+.block-text {
+
+}
+.block-text_center {
+    text-align: center;
+}
+.block-text__title {
+    font-weight: 700;
+    @include fontz(44);
+    line-height: 126%;
+    color: var(--default_color-title);
+    span {
+        color: #EC5863;
+    }
+    // на случай, если ниже не будет текст и тогда висячий отступ уберется, так как title станет последним элементом
+    &:not(:last-child) {
+        margin: 0 0 12px 0;
+    }
+    @media (max-width: 767.98px) {
+        @include fontz(34);
+    }
+}
+.block-text__title-blue {
+    span {
+        color: #4285F4;
+    }
+}
+.block-text__text {
+    &:not(:last-child) {
+        margin: 0 0 24px 0;
+    }
+}
+.block-text__text_mw {
+    max-width: 620px;
+    margin: 0 auto;
+}
+.block-text__button {
+}
+/* ----------------------------------------------------------------------------------- */
+
+.main__get-started {
+}
+.get-started {
+    background-color: var(--default_background-blocks);
+}
+.get-started__container {
+    padding: 150px 15px 50px;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    // декоративный элемент в справа
+    &::before {
+        content: '';
+        position: absolute;
+        width: 100vw; // vw - для ультра широких мониторов, чтобы полность заполнял правую часть
+        height: 100%;
+        // возвращаем на отступ кнопки в header
+        right: 267px; // +15px от ограничивающего контейнера
+        top: 0;
+        // сдвигаем вправо
+        transform: translate(100%, 0);
+        background-color: #ec5863;
+        border-radius: 30px 0 0 30px;
+        @media (max-width: 991.98px) {
+            right: 185px; // +15px от ограничивающего контейнера
+            border-radius: 20px 0 0 20px;
+        }
+        @media (max-width: 767.98px) {
+            display: none;
+        }
+    }
+    @media (max-width: 767.98px) {
+        padding: 100px 15px 30px; 
+    }
+}
+.get-started__content {
+    flex: 0 1 48%; // 48% так как текст немного меньше по ширине, чем картинка
+    padding: 0 20px;
+    opacity: 0;
+    transform: translate(0px, 120%);
+    transition: all 0.5s ease 0s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px);
+    }
+    @media (max-width: 767.98px) {
+        flex: 1 1 100%;
+        padding: 0;
+    }
+}
+.get-started__block-text {
+    max-width: 410px;
+    @media (max-width: 767.98px) {
+        max-width: none;
+    }
+}
+.button {
+}
+.get-started__image {
+    position: relative;
+    z-index: 2;
+    flex: 0 1 52%; // картинка немного шире, поэтому 52%
+    opacity: 0;
+    transform: translate(0px, 40%) rotate(45deg);
+    transition: all 0.5s ease 0.2s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px) rotate(0);
+    }
+    img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    @media (max-width: 767.98px) {
+        flex: 1 1 100%;
+        text-align: center;
+        padding: 30px 0;
+    }
+}
+.get-started__video {
+    flex: 1 1 100%;
+    padding: 60px 0 20px;
+    @media (max-width: 767.98px) {
+        padding: 0;
+    }
+}
+.video-get-started {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translate(-120%, 0px);
+    transition: all 0.5s ease 0.4s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px);
+    }
+}
+.video-get-started__icon {
+    flex: 0 0 44px;
+}
+.video-get-started__body {
+    padding: 0 0 0 12px;
+}
+.video-get-started__title {
+    color: var(--button_stay-safe-title);
+    @include fontz(13);
+    line-height: 126%;
+    letter-spacing: 0.08em;
+    &:not(:last-child) {
+        margin: 0 0 5px 0;
+    }
+}
+.video-get-started__text {
+    text-transform: uppercase;
+    color: var(--button_stay-safe-text);
+    @include fontz(9);
+    line-height: 126%;
+    line-height: 0.165em;
+}
+
+/* ----------------------------------------------------------------------------------- */
+.main__stay-safe {
+}
+.stay-safe {
+    padding: 80px 0;
+    @media (max-width: 991.98px) {
+        padding: 30px 0;
+    }
+}
+.stay-safe__container {
+    display: flex;
+    align-items: center;
+    @media (max-width: 767.98px) {
+        flex-direction: column-reverse;
+    }
+}
+.stay-safe__media {
+    flex: 0 1 50%;
+    @media (min-width: 991.98px) {
+        padding: 0px 0px 0px 47px;
+    }
+}
+.stay-safe__content {
+    flex: 0 1 50%;
+    @media (max-width: 767.98px) {
+        margin: 0 0 30px 0;
+    }
+}
+.stay-safe__block-text {
+    opacity: 0;
+    transform: translate(120%, 0px);
+    transition: all 0.3s ease 0s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px);
+    }
+}
+
+.media-stay-safe {
+    // делаем коробку для дополнительных объектов, которые будем позиционировать
+    width: 373px;
+    position: relative;
+    text-align: center; // центруем изображение
+    padding: 56px 0px 27px 0px;
+    @media (max-width: 479.98px) {
+        width: 290px;
+    }
+}
+.media-stay-safe__image {
+    display: inline-block; // тогда объект занимает ширину контента (картинки)
+    box-shadow: 2px 4px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
+    position: relative;
+    z-index: 2;
+    width: 61.5%;
+    opacity: 0;
+    transform: translate(0px, -50%);
+    transition: all 0.5s ease 0s;
+    &._active {
+        transform: translate(0px, 0px);
+        opacity: 1;
+    }
+    img {
+        max-width: 100%;
+        position: relative;
+        z-index: 3;
+    }
+    // тень снизу
+    &::after {
+        content: '';
+        position: absolute;
+        z-index: 2;
+        bottom: -12px;
+        left: 12px;
+        width: 206px;
+        height: 27px;
+        background: rgba(240, 240, 240, 0.49);
+        border-radius: 16px;
+        @media (max-width: 479.98px) {
+            width: 157px;
+        }
+    }
+}
+
+.media-stay-safe__item {
+    position: absolute;
+    background-color: #ec5863;
+    border-radius: 30%;
+    // width 373px height 542px
+    // 77 * 100 / 373 = 20.6% width
+    // 77 * 100 / 542 = 14.2% height
+    // width: 77px;
+    // height: 77px;
+    width: 20.6%;
+    height: 14.2%;
+    opacity: 0;
+}
+.media-stay-safe__item_1 {
+    top: 0;
+    left: 0;
+    // width: 147px;
+    // 147 * 100 / 373 = 39.4%
+    width: 39.4%;
+    // height: 147px;
+    // 542 height общая => 147 * 100 / 542 = 27%
+    height: 27%;
+    transform: translate(-120%, 0px) rotate(-45deg);
+    transition: all 0.5s ease 0.1s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+}
+.media-stay-safe__item_2 {
+    bottom: 0;
+    left: 33px;
+    transform: translate(-120%, 0px) rotate(-45deg);
+    transition: all 0.5s ease 0.3s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+}
+.media-stay-safe__item_3 {
+    bottom: 107px;
+    right: 34px;
+    transform: translate(120%, 0px) rotate(45deg);
+    transition: all 0.5s ease 0.2s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+}
+
+/* ----------------------------------------------------------------------------------- */
+
+.main__experts {
+}
+.experts {
+    background-color: var(--default_background-blocks);
+    padding: 100px 0 115px 0;
+    @media (max-width: 767.98px) {
+        padding: 80px 0 30px 0;
+    }
+}
+.experts__container {
+}
+.experts__statistics {
+}
+.statistics-experts {
+    max-width: 655px;
+    margin: 0 auto 80px;
+    position: relative;
+}
+.statistics-experts__body {
+    background-color: var(--default_background-counter);
+    box-shadow: 0 2px 24px rgba(88, 126, 236, 0.15);
+    border-radius: 15px;
+    position: relative;
+    z-index: 2;
+    @media (max-width: 767.98px) {
+        margin: 0 0 50px 0;
+    }
+}
+
+.body-statistics-experts {
+    padding: 25px 80px;
+    display: flex;
+    align-items: center;
+    @media (max-width: 767.98px) {
+        padding: 25px;
+    }
+    @media (max-width: 479.98px) {
+        flex-direction: column;
+    }
+}
+.body-statistics-experts__item {
+    flex: 0 1 25%;
+    text-align: center;
+    &:last-child {
+        flex: 0 1 50%;
+    }
+    &:not(:last-child) {
+        @media (max-width: 479.98px) {
+            margin: 0 0 15px 0;
+        }
+    }
+}
+.body-statistics-experts__box {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    @include fontz(36);
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    color: #EC5863;
+    margin-bottom: 5px;
+}
+.body-statistics-experts__value {
+}
+.body-statistics-experts__value-symbol {
+}
+.body-statistics-experts__text {
+    font-weight: 700;
+    @include fontz(11);
+    line-height: 1.8;
+    letter-spacing: 0.37em;
+    text-transform: uppercase;
+    color: var(--counter_text);
+}
+
+.statistics-experts__decor {
+    position: absolute;
+    background-color: #ec5863;
+    border-radius: 30%;
+}
+.statistics-experts__decor_1 {
+    width: 65px;
+    height: 65px;
+    transform: translate(-500%, 0px) rotate(-75deg);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+    bottom: -21px;
+    left: -21px;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px) rotate(-35deg);
+    }
+}
+.statistics-experts__decor_2 {
+    width: 97px;
+    height: 97px;
+    right: 50%;
+    top: -40px;
+    transform: translate(0px, 180%) rotate(-75deg);
+    opacity: 0;
+    transition: all 0.5s ease 0.2s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px) rotate(30deg);
+    }
+}
+.statistics-experts__decor_3 {
+    width: 128px;
+    height: 128px;
+    right: -55px;
+    top: 0;
+    transform: translate(120%, 0px) rotate(-75deg);
+    opacity: 0;
+    transition: all 0.5s ease 0.4s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px) rotate(-30deg);
+    }
+}
+
+.experts__body {
+    display: flex;
+    align-items: center;
+    @media (max-width: 767.98px) {
+        flex-direction: column;
+        align-items: unset; // убираем, чтобы показалось видео
+    }
+}
+.experts__content {
+    flex: 0 1 50%;
+    padding: 0 20px 0 0;
+    @media (max-width: 767.98px) {
+        padding: 0;
+        margin-bottom: 30px;
+    }
+}
+.experts__block-text {
+    max-width: 400px;
+    opacity: 0;
+    transform: translate(-120%, 0px);
+    transition: all 0.5s ease 0.2s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px)
+    }
+}
+.experts__video {
+    flex: 0 1 50%;
+    padding: 0 0 29% 0; // показывает видео (определяет его высоту)
+    position: relative;
+    box-shadow: 0 4px 18px rgba(88, 126, 236, 0.18);
+    border-radius: 8px;
+    overflow: hidden;
+    opacity: 0;
+    // transform: translate(0px, 120%);
+    transition: all 0.5s ease 0.2s;
+    &._active {
+        opacity: 1;
+        // transform: translate(0px, 0px);
+    }
+    @media (max-width: 767.98px) {
+        padding: 0 0 58% 0;
+    }
+    video {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        object-fit: cover;
+        cursor: pointer;
+    }
+}
+/* ----------------------------------------------------------------------------------- */
+
+.main__healthcare {
+}
+.healthcare {
+    padding: 80px 0 30px 0;
+}
+.healthcare__container {
+}
+.healthcare__block-text {
+    margin: 0 0 70px 0;
+    opacity: 0;
+    transform: translate(0px, 120%);
+    transition: all 0.5s ease 0s;
+    &._active {
+        opacity: 1;
+        transform: translate(0px, 0px);
+    }
+}
+
+.healthcare__items {
+    display: flex;
+    max-width: 980px; // ширина блока с карточками
+    margin: 0 auto;
+    justify-content: space-between;
+    @media (max-width: 767.98px) {
+        flex-direction: column;
+    }
+}
+.healthcare__column {
+    // 278 (ширина карточки) * 100 / 980 = 28%
+    flex: 0 1 28%;
+    position: relative;
+    @media (max-width: 767.98px) {
+        &:not(:last-child) {
+            margin-bottom: 30px;
+        }
+    }
+}
+// Декор
+.healthcare__column_1 {
+    &::before,&::after {
+        content: '';
+        z-index: -1;
+        position: absolute;
+        background-color: #EC5863;
+        border-radius: 16px;
+        @media (max-width: 767.98px) {
+            display: none;
+        }
+    }
+    &::before {
+        width: 65px;
+        height: 65px;
+        bottom: -35px;
+        left: -20px;
+        transform: rotate(30deg) translate(0px, 120%);
+        opacity: 0;
+        transition: all 0.5s ease 0.3s;
+    }
+    &::after {
+        width: 97px;
+        height: 97px;
+        top: 35px;
+        right: -40px;
+        transform: rotate(-30deg) translate(0px, 120%);
+        border-radius: 30px;
+        opacity: 0;
+        transition: all 0.5s ease 0.4s;
+    }
+}
+.healthcare__column_2 {
+    &::after {
+        content: '';
+        z-index: -1;
+        position: absolute;
+        background-color: #EC5863;
+        border-radius: 30px;
+        width: 127px;
+        height: 127px;
+        bottom: -25px;
+        right: -85px;
+        transform: rotate(30deg) translate(0px, 120%);
+        opacity: 0;
+        transition: all 0.5s ease 0.5s;
+        @media (max-width: 767.98px) {
+            display: none;
+        }
+    }
+}
+.healthcare__column_3 {
+    &::after {
+        content: '';
+        z-index: -1;
+        position: absolute;
+        background-color: #EC5863;
+        border-radius: 16px;
+        width: 65px;
+        height: 65px;
+        top: -30px;
+        right: -25px;
+        opacity: 0;
+        transform: rotate(30deg) translate(0px, 120%);
+        transition: all 0.5s ease 0.6s;
+        @media (max-width: 767.98px) {
+            display: none;
+        }
+    }
+}
+
+.healthcare__item {
+}
+.item-healthcare {
+    // на случай, если в одной из карточек много текста, то чтобы они все выравнивались под максимальную высоту
+    height: 100%;
+    background-color: var(--default_background-healthcare);
+    box-shadow: 0px 4px 18px rgba(88, 126,236, 0.18);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 35px 15px;
+    &:not(:last-child) {
+        margin-right: 15px;
+    }
+}
+.item-healthcare__icon {
+    margin-bottom: 58px;
+    @media (max-width: 767.98px) {
+        margin-bottom: 30px;
+    }
+}
+.item-healthcare__title {
+    font-weight: 700;
+    @include fontz(16);
+    line-height: 138.5%;
+    color: var(--item-healthcare__title);
+    margin-bottom: 5px;
+}
+.item-healthcare__text {
+    line-height: 138.5%;
+    letter-spacing: 0.08em;
+}
+
+/* ----------------------------------------------------------------------------------- */
+
+.footer {
+    padding: 45px 0;
+    @media (max-width: 479.98px) {
+        padding: 25px 0;
+    }
+}
+.footer__container {
+}
+.footer__items {
+    max-width: 410px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    @media (max-width: 479.98px) {
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+// 160/56
+.footer__item {
+    width: 160px;
+    height: 56px;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.5s ease 0s;
+    opacity: 0;
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    &:nth-child(1) {
+        transform: translate(-500%, 0px);
+    }
+    &:nth-child(2) {
+        transform: translate(500%, 0px);
+    }
+    @media (max-width: 479.98px) {
+        opacity: 1;
+        &:not(:last-child) {
+            margin-bottom: 15px;
+        }
+    }
+}
+
+/* -------Animation of Appearance------------------------------------------------------------------ */
+// Для каждого анимированного блока в классе прописывается своя доп анимация, + класс _active
+// задержка по элементам: 0; 0.2; 0.4; 0.6; 0.8
+
+// для повторяющихся блоков для анимации
+._anim-show {
+    transform: translate(0px, 120%);
+    opacity: 0;
+    transition: all 0.5s ease 0s;
+ }
+ 
+ // такой финт для того, чтобы анимировать статичный блок, по типу с текстом
+ // то есть на контейнер ставим _anim-items и к нему добавляется _active при скролле и уже если
+ // есть _active и глубже есть класс _anim-show, то и его анимировать
+ ._active {
+    >._anim-show {
+        &.healthcare__column_1 {
+            &::before,&::after {
+                opacity: 1;
+            }
+            &::before {
+                transform: rotate(-30deg) translate(0px, 0px);
+            }
+            &::after {
+                transform: rotate(30deg) translate(0px, 0px);
+            }
+        }
+        &.healthcare__column_2 {
+            &::after {
+                opacity: 1;
+                transform: rotate(-30deg) translate(0px, 0px);
+            }
+        }
+        &.healthcare__column_3 {
+            &::after {
+                opacity: 1;
+                transform: rotate(-30deg) translate(0px, 0px);
+            }
+        }
+        &.footer__item {
+            opacity: 0.8;
+            &:hover {
+                opacity: 1;
+            }
+        }
+        opacity: 1;
+        transform: translate(0px, 0px);
+    }
+ }
+
+
